@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ayin Catering - Katalog Menu & Layanan Catering Tanah Bumbu</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter & Playfair Display -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    },
+                    colors: {
+                        brand: {
+                            brown: '#3B1E0E',
+                            brownDark: '#261207',
+                            gold: '#C59B47',
+                            goldLight: '#E5C687',
+                            cream: '#F9F6F0',
+                            sand: '#EFE9DC',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Halus dan elegan untuk scrollbar serta kartu menu */
+        body {
+            background-color: #F9F6F0;
+            color: #3B1E0E;
+            font-family: 'Inter', sans-serif;
+        }
+        .menu-card {
+            transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+        }
+        .menu-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 14px 28px -8px rgba(59, 30, 14, 0.14);
+            border-color: #C59B47;
+        }
+        /* Animasi toast notifikasi */
+        @keyframes fadeSlideUp {
+            from { opacity: 0; transform: translateY(16px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .toast-enter {
+            animation: fadeSlideUp 0.25s ease forwards;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col bg-brand-cream text-brand-brown selection:bg-brand-gold/30">
+
+    <!-- Toast Notifikasi (Tanpa alert/confirm) -->
+    <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <!-- Header Navigasi -->
+    <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-brand-gold/25 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-3">
+            <!-- Logo Brand AC -->
+            <a href="#" class="flex items-center gap-3 group min-w-0">
+                <div class="w-12 h-12 shrink-0 rounded-xl bg-[#F8F6F2] border border-brand-gold/40 p-0.5 shadow-sm flex items-center justify-center group-hover:scale-105 transition-transform overflow-hidden">
+                    <svg viewBox="0 0 800 800" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="goldGradNav" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" stop-color="#C89B42"/>
+                                <stop offset="50%" stop-color="#DFBA68"/>
+                                <stop offset="100%" stop-color="#B0822E"/>
+                            </linearGradient>
+                            <linearGradient id="hatCreamNav" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#FFFFFF"/>
+                                <stop offset="65%" stop-color="#FBF7EE"/>
+                                <stop offset="100%" stop-color="#E7CFA0"/>
+                            </linearGradient>
+                        </defs>
+                        <!-- Busur Lingkaran Emas Kiri & Kanan -->
+                        <path d="M 300 124 C 195 168 135 275 135 398 C 135 416 137 434 140 450 C 138 420 140 385 147 352 C 165 255 224 176 300 138 Z" fill="url(#goldGradNav)"/>
+                        <path d="M 540 147 C 606 196 646 276 646 368 C 646 392 643 415 638 437 C 641 412 643 386 643 360 C 643 272 604 195 540 158 Z" fill="url(#goldGradNav)"/>
+
+                        <!-- Huruf A Kaligrafi Tajam -->
+                        <path d="M 332 214 L 138 494 C 168 485 192 480 212 478 L 138 494 C 175 487 205 484 232 484 L 315 358 L 382 478 L 418 462 L 332 214 Z" fill="#3B1D0D"/>
+                        <path d="M 274 358 L 138 494 C 172 484 205 479 236 479 L 288 400 L 315 442 C 296 445 276 450 256 458 L 325 452 L 274 358 Z" fill="#3B1D0D"/>
+                        <path d="M 274 358 L 210 462 C 185 470 160 480 138 494 C 176 485 215 483 252 487 C 272 489 288 494 302 500 C 282 482 268 466 258 448 L 295 390 Z" fill="#3B1D0D"/>
+
+                        <!-- Huruf C Besar Melengkung -->
+                        <path d="M 596 250 C 578 260 558 266 535 266 C 482 266 434 295 396 336 L 414 358 C 446 322 488 298 534 298 C 562 298 584 308 598 326 L 598 250 Z" fill="#3B1D0D"/>
+                        <path d="M 382 352 L 364 374 C 388 418 406 462 426 502 C 460 572 518 608 584 608 C 654 608 708 558 724 484 C 712 528 676 564 624 572 C 556 582 496 544 456 468 C 434 426 410 386 382 352 Z" fill="#3B1D0D"/>
+                        <path d="M 624 572 C 676 564 712 528 724 484 C 716 510 698 528 676 538 C 686 522 692 502 694 480 C 684 516 658 544 624 572 Z" fill="#3B1D0D"/>
+
+                        <!-- Sendok dan Garpu di Dalam Huruf C -->
+                        <g fill="#3B1D0D">
+                            <ellipse cx="489" cy="364" rx="18" ry="28" transform="rotate(-8 489 364)"/>
+                            <path d="M 484 391 L 494 391 L 502 524 L 490 522 Z"/>
+                            <path d="M 541 334 L 543 372 L 548 372 L 550 335 L 554 335 L 553 373 L 558 373 L 560 336 L 564 337 L 562 374 L 567 375 L 570 338 L 573 339 L 570 378 C 569 388 562 394 553 394 L 537 532 L 525 530 L 545 393 C 538 390 534 383 535 374 L 538 334 Z"/>
+                        </g>
+
+                        <!-- Pita Emas Melengkung Menyilang -->
+                        <path d="M 165 516 C 170 455 225 436 286 446 C 342 455 395 426 446 376 C 495 328 552 292 612 272 C 562 298 515 335 466 385 C 412 440 352 472 288 462 C 234 454 188 470 165 516 Z" fill="url(#goldGradNav)"/>
+                        <path d="M 245 452 C 325 456 392 418 456 358 C 512 306 564 276 612 272 C 568 284 520 318 468 372 C 406 436 334 468 245 452 Z" fill="#E9CE8E" opacity="0.85"/>
+
+                        <!-- Topi Koki di Atas Huruf A & C -->
+                        <g transform="translate(332, 66)">
+                            <path d="M 32 112 L 178 156 L 160 202 L 26 160 Z" fill="url(#hatCreamNav)" stroke="#3B1D0D" stroke-width="11" stroke-linejoin="round"/>
+                            <path d="M 96 132 L 176 156 L 158 198 L 92 178 C 104 164 106 146 96 132 Z" fill="#E5C687" opacity="0.7"/>
+                            <path d="M 24 114 C -2 98 -4 52 28 34 C 34 4 84 -6 114 14 C 146 -4 196 14 202 52 C 234 62 240 104 212 126 C 194 140 174 144 156 140 C 118 122 76 112 24 114 Z" fill="url(#hatCreamNav)" stroke="#3B1D0D" stroke-width="12" stroke-linejoin="round"/>
+                            <path d="M 198 56 C 226 68 230 104 204 122 C 188 134 170 136 154 132 C 176 124 192 104 196 80 C 198 70 198 62 198 56 Z" fill="#E3C382" opacity="0.75"/>
+                            <path d="M 22 62 C 16 80 22 98 38 108 C 28 92 28 76 36 62 Z" fill="#E3C382" opacity="0.75"/>
+                            <!-- Lipatan / Kerutan Topi Koki -->
+                            <path d="M 118 22 C 104 34 100 50 104 66" fill="none" stroke="#3B1D0D" stroke-width="7.5" stroke-linecap="round"/>
+                            <path d="M 178 44 C 182 68 170 94 148 112" fill="none" stroke="#3B1D0D" stroke-width="8.5" stroke-linecap="round"/>
+                            <path d="M 68 62 C 62 76 62 90 66 102" fill="none" stroke="#3B1D0D" stroke-width="6.5" stroke-linecap="round"/>
+                        </g>
+                    </svg>
+                </div>
+                <div class="truncate">
+                    <span class="font-serif text-lg sm:text-2xl font-bold tracking-wide text-brand-brown block leading-none truncate">AYIN CATERING</span>
+                    <span class="text-[11px] font-medium tracking-widest uppercase text-brand-gold">Tanah Bumbu • Kalimantan Selatan</span>
+                </div>
+            </a>
+
+            <!-- Navigasi & Aksi -->
+            <div class="flex items-center gap-2 sm:gap-3">
+                <a href="#katalog-menu" class="hidden md:inline-flex items-center px-3.5 py-2 text-sm font-medium text-brand-brown hover:text-brand-gold transition-colors">
+                    Katalog Menu
+                </a>
+                <a href="#lokasi-kontak" class="hidden md:inline-flex items-center px-3.5 py-2 text-sm font-medium text-brand-brown hover:text-brand-gold transition-colors">
+                    Alamat & WA
+                </a>
+                <button onclick="openAddMenuModal()" class="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-brand-sand hover:bg-brand-gold/20 text-brand-brown border border-brand-gold/40 text-xs sm:text-sm font-semibold transition-all cursor-pointer">
+                    <i data-lucide="camera" class="w-4 h-4 text-brand-brown"></i>
+                    <span>Upload Foto Menu</span>
+                </button>
+                <button onclick="openCartModal()" class="relative inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-brand-brown hover:bg-brand-brownDark text-white text-xs sm:text-sm font-semibold shadow-sm transition-all cursor-pointer">
+                    <i data-lucide="shopping-bag" class="w-4 h-4 text-brand-goldLight"></i>
+                    <span>Pesanan</span>
+                    <span id="cartBadge" class="ml-0.5 px-2 py-0.5 text-xs font-bold rounded-full bg-brand-gold text-brand-brownDark">0</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero & Identitas Visual Brand -->
+    <section class="relative overflow-hidden border-b border-brand-gold/20 bg-gradient-to-b from-[#F5EFE2] via-brand-cream to-brand-cream">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                <!-- Teks Utama -->
+                <div class="lg:col-span-7 space-y-5 text-center lg:text-left">
+                    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-brand-gold/40 shadow-xs text-xs font-semibold text-brand-brown">
+                        <span class="w-2 h-2 rounded-full bg-brand-gold"></span>
+                        <span>E-Katalog Resmi • Layanan Instansi, Acara & Harian</span>
+                    </div>
+
+                    <h1 class="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-brand-brown leading-tight">
+                        Cita Rasa Istimewa untuk Setiap Momen di <span class="text-brand-gold">Tanah Bumbu</span>
+                    </h1>
+
+                    <p class="text-sm sm:text-base text-brand-brown/80 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
+                        <strong>Ayin Catering</strong> melayani pemesanan Nasi Box, Snack Kotak VIP, Paket Prasmanan, hingga Paket Buah Sajian dengan harga transparan sesuai e-katalog. Anda juga dapat langsung mengunggah atau memperbarui foto menu kapan saja.
+                    </p>
+
+                    <div class="flex flex-wrap items-center justify-center lg:justify-start gap-3 pt-1">
+                        <a href="#katalog-menu" class="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-brand-brown hover:bg-brand-brownDark text-white font-semibold text-sm shadow-md transition-all">
+                            <i data-lucide="utensils" class="w-4 h-4 text-brand-goldLight"></i>
+                            <span>Lihat Daftar Harga Menu</span>
+                        </a>
+                        <a href="https://wa.me/6281227888817?text=Halo%20Ayin%20Catering%2C%20saya%20ingin%20bertanya%20mengenai%20menu%20catering." target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-sm shadow-md transition-all">
+                            <i data-lucide="message-circle" class="w-4 h-4"></i>
+                            <span>Chat WA: 0812-2788-8817</span>
+                        </a>
+                    </div>
+
+                    <!-- Info Singkat Alamat & WA -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 text-left">
+                        <div class="p-3.5 rounded-2xl bg-white/90 border border-brand-gold/25 flex items-start gap-3">
+                            <div class="p-2 rounded-xl bg-brand-sand text-brand-brown shrink-0">
+                                <i data-lucide="map-pin" class="w-4 h-4 text-brand-gold"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs font-bold uppercase tracking-wider text-brand-gold">Alamat Lengkap</p>
+                                <p class="text-xs sm:text-sm text-brand-brown font-medium leading-snug mt-0.5">
+                                    Jln. Nurul Yaqin, Kec. Simpang Empat, Kabupaten Tanah Bumbu, Kalimantan Selatan 72211
+                                </p>
+                            </div>
+                        </div>
+                        <div class="p-3.5 rounded-2xl bg-white/90 border border-brand-gold/25 flex items-start gap-3">
+                            <div class="p-2 rounded-xl bg-brand-sand text-brand-brown shrink-0">
+                                <i data-lucide="phone-call" class="w-4 h-4 text-brand-gold"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs font-bold uppercase tracking-wider text-brand-gold">WhatsApp Pemesanan</p>
+                                <p class="text-sm sm:text-base text-brand-brown font-bold mt-0.5">0812-2788-8817</p>
+                                <p class="text-xs text-brand-brown/70">Siap melayani pesanan partai kecil & besar</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Kartu Identitas Logo Resmi Ayin Catering -->
+                <div class="lg:col-span-5">
+                    <div class="relative rounded-3xl bg-[#F8F6F2] border-2 border-brand-gold/45 p-6 sm:p-8 shadow-xl text-center">
+                        <div class="w-56 h-56 mx-auto mb-1">
+                            <svg viewBox="0 0 800 800" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+                                <defs>
+                                    <linearGradient id="goldMain" x1="0%" y1="0%" x2="100%" y2="0%">
+                                        <stop offset="0%" stop-color="#C89B42"/>
+                                        <stop offset="50%" stop-color="#DFBA68"/>
+                                        <stop offset="100%" stop-color="#B0822E"/>
+                                    </linearGradient>
+                                    <linearGradient id="hatCream" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" stop-color="#FFFFFF"/>
+                                        <stop offset="65%" stop-color="#FBF7EE"/>
+                                        <stop offset="100%" stop-color="#E7CFA0"/>
+                                    </linearGradient>
+                                </defs>
+                                <!-- Busur Lingkaran Emas Kiri & Kanan -->
+                                <path d="M 300 124 C 195 168 135 275 135 398 C 135 416 137 434 140 450 C 138 420 140 385 147 352 C 165 255 224 176 300 138 Z" fill="url(#goldMain)"/>
+                                <path d="M 540 147 C 606 196 646 276 646 368 C 646 392 643 415 638 437 C 641 412 643 386 643 360 C 643 272 604 195 540 158 Z" fill="url(#goldMain)"/>
+
+                                <!-- Huruf A Kaligrafi Tajam -->
+                                <path d="M 332 214 L 138 494 C 168 485 192 480 212 478 L 138 494 C 175 487 205 484 232 484 L 315 358 L 382 478 L 418 462 L 332 214 Z" fill="#3B1D0D"/>
+                                <path d="M 274 358 L 138 494 C 172 484 205 479 236 479 L 288 400 L 315 442 C 296 445 276 450 256 458 L 325 452 L 274 358 Z" fill="#3B1D0D"/>
+                                <path d="M 274 358 L 210 462 C 185 470 160 480 138 494 C 176 485 215 483 252 487 C 272 489 288 494 302 500 C 282 482 268 466 258 448 L 295 390 Z" fill="#3B1D0D"/>
+
+                                <!-- Huruf C Besar Melengkung -->
+                                <path d="M 596 250 C 578 260 558 266 535 266 C 482 266 434 295 396 336 L 414 358 C 446 322 488 298 534 298 C 562 298 584 308 598 326 L 598 250 Z" fill="#3B1D0D"/>
+                                <path d="M 382 352 L 364 374 C 388 418 406 462 426 502 C 460 572 518 608 584 608 C 654 608 708 558 724 484 C 712 528 676 564 624 572 C 556 582 496 544 456 468 C 434 426 410 386 382 352 Z" fill="#3B1D0D"/>
+                                <path d="M 624 572 C 676 564 712 528 724 484 C 716 510 698 528 676 538 C 686 522 692 502 694 480 C 684 516 658 544 624 572 Z" fill="#3B1D0D"/>
+
+                                <!-- Sendok dan Garpu di Dalam Huruf C -->
+                                <g fill="#3B1D0D">
+                                    <ellipse cx="489" cy="364" rx="18" ry="28" transform="rotate(-8 489 364)"/>
+                                    <path d="M 484 391 L 494 391 L 502 524 L 490 522 Z"/>
+                                    <path d="M 541 334 L 543 372 L 548 372 L 550 335 L 554 335 L 553 373 L 558 373 L 560 336 L 564 337 L 562 374 L 567 375 L 570 338 L 573 339 L 570 378 C 569 388 562 394 553 394 L 537 532 L 525 530 L 545 393 C 538 390 534 383 535 374 L 538 334 Z"/>
+                                </g>
+
+                                <!-- Pita Emas Melengkung Menyilang -->
+                                <path d="M 165 516 C 170 455 225 436 286 446 C 342 455 395 426 446 376 C 495 328 552 292 612 272 C 562 298 515 335 466 385 C 412 440 352 472 288 462 C 234 454 188 470 165 516 Z" fill="url(#goldMain)"/>
+                                <path d="M 245 452 C 325 456 392 418 456 358 C 512 306 564 276 612 272 C 568 284 520 318 468 372 C 406 436 334 468 245 452 Z" fill="#E9CE8E" opacity="0.85"/>
+
+                                <!-- Topi Koki di Atas Huruf A & C -->
+                                <g transform="translate(332, 66)">
+                                    <path d="M 32 112 L 178 156 L 160 202 L 26 160 Z" fill="url(#hatCream)" stroke="#3B1D0D" stroke-width="11" stroke-linejoin="round"/>
+                                    <path d="M 96 132 L 176 156 L 158 198 L 92 178 C 104 164 106 146 96 132 Z" fill="#E5C687" opacity="0.7"/>
+                                    <path d="M 24 114 C -2 98 -4 52 28 34 C 34 4 84 -6 114 14 C 146 -4 196 14 202 52 C 234 62 240 104 212 126 C 194 140 174 144 156 140 C 118 122 76 112 24 114 Z" fill="url(#hatCream)" stroke="#3B1D0D" stroke-width="12" stroke-linejoin="round"/>
+                                    <path d="M 198 56 C 226 68 230 104 204 122 C 188 134 170 136 154 132 C 176 124 192 104 196 80 C 198 70 198 62 198 56 Z" fill="#E3C382" opacity="0.75"/>
+                                    <path d="M 22 62 C 16 80 22 98 38 108 C 28 92 28 76 36 62 Z" fill="#E3C382" opacity="0.75"/>
+                                    <path d="M 118 22 C 104 34 100 50 104 66" fill="none" stroke="#3B1D0D" stroke-width="7.5" stroke-linecap="round"/>
+                                    <path d="M 178 44 C 182 68 170 94 148 112" fill="none" stroke="#3B1D0D" stroke-width="8.5" stroke-linecap="round"/>
+                                    <path d="M 68 62 C 62 76 62 90 66 102" fill="none" stroke="#3B1D0D" stroke-width="6.5" stroke-linecap="round"/>
+                                </g>
+
+                                <!-- Ornamen Garis Ukir Atas -->
+                                <g fill="url(#goldMain)">
+                                    <rect x="52" y="616" width="232" height="6" rx="2"/>
+                                    <polygon points="54,606 67,619 54,632 41,619"/>
+                                    <path d="M 400 578 C 392 595 388 612 400 628 C 412 612 408 595 400 578 Z"/>
+                                    <path d="M 386 594 C 374 604 372 618 384 628 C 388 616 388 604 386 594 Z"/>
+                                    <path d="M 414 594 C 426 604 428 618 416 628 C 412 616 412 604 414 594 Z"/>
+                                    <path d="M 372 608 C 352 602 332 606 322 618 C 314 628 296 634 282 624 C 294 638 318 638 332 624 C 340 615 356 614 372 618 Z"/>
+                                    <path d="M 428 608 C 448 602 468 606 478 618 C 486 628 504 634 518 624 C 506 638 482 638 468 624 C 460 615 444 614 428 618 Z"/>
+                                    <rect x="516" y="616" width="232" height="6" rx="2"/>
+                                    <polygon points="746,606 759,619 746,632 733,619"/>
+                                </g>
+
+                                <!-- Ornamen Garis Ukir Bawah -->
+                                <g fill="url(#goldMain)">
+                                    <rect x="68" y="714" width="262" height="5" rx="2"/>
+                                    <rect x="470" y="714" width="262" height="5" rx="2"/>
+                                    <path d="M 400 712 C 390 726 390 748 400 764 C 410 748 410 726 400 712 Z"/>
+                                    <path d="M 392 716 C 372 704 334 704 328 722 C 324 734 338 742 350 734 C 342 732 340 724 348 720 C 362 714 380 718 392 726 Z"/>
+                                    <path d="M 392 728 C 374 726 358 734 360 746 C 362 756 378 756 388 744 Z"/>
+                                    <path d="M 408 716 C 428 704 466 704 472 722 C 476 734 462 742 450 734 C 458 732 460 724 452 720 C 438 714 420 718 408 726 Z"/>
+                                    <path d="M 408 728 C 426 726 442 734 440 746 C 438 756 422 756 412 744 Z"/>
+                                </g>
+                            </svg>
+                        </div>
+
+                        <h2 class="font-serif text-2xl font-extrabold tracking-widest text-brand-brown mt-1">AYIN CATERING</h2>
+                        <p class="text-xs font-medium tracking-wider uppercase text-brand-gold mt-1">Simpang Empat • Tanah Bumbu</p>
+                        <div class="mt-4 pt-4 border-t border-brand-gold/25 flex items-center justify-center gap-2 text-xs text-brand-brown/75">
+                            <i data-lucide="image-plus" class="w-4 h-4 text-brand-gold"></i>
+                            <span>Klik tombol kamera pada kartu menu untuk ganti foto</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Bagian Katalog Menu & Harga E-Katalog -->
+    <main id="katalog-menu" class="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-12 flex-1">
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+            <div>
+                <span class="text-xs font-bold uppercase tracking-widest text-brand-gold">Daftar Harga E-Katalog</span>
+                <h2 class="font-serif text-2xl sm:text-3xl font-bold text-brand-brown mt-1">Katalog Menu Ayin Catering</h2>
+                <p class="text-sm text-brand-brown/75 mt-1">Harga sesuai daftar e-katalog. Pilih kategori, unggah foto menu baru, atau tambah ke pesanan.</p>
+            </div>
+
+            <!-- Pencarian Menu -->
+            <div class="relative w-full md:w-72">
+                <i data-lucide="search" class="w-4 h-4 text-brand-brown/50 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+                <input id="searchInput" type="text" oninput="renderMenus()" placeholder="Cari nama menu..." class="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white border border-brand-gold/35 text-sm text-brand-brown placeholder:text-brand-brown/45 focus:outline-none focus:border-brand-brown">
+            </div>
+        </div>
+
+        <!-- Filter Kategori -->
+        <div id="categoryTabs" class="flex items-center gap-2 overflow-x-auto pb-3 mb-6">
+            <!-- Dirender oleh JavaScript -->
+        </div>
+
+        <!-- Grid Kartu Menu -->
+        <div id="menuGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <!-- Dirender oleh JavaScript -->
+        </div>
+
+        <!-- Pesan Kosong Jika Tidak Ada Hasil -->
+        <div id="emptyState" class="hidden text-center py-16 px-4 rounded-2xl bg-white border border-brand-gold/25 mt-6">
+            <i data-lucide="utensils-crossed" class="w-10 h-10 text-brand-gold mx-auto mb-3"></i>
+            <h3 class="font-serif text-lg font-bold text-brand-brown">Menu tidak ditemukan</h3>
+            <p class="text-sm text-brand-brown/70 mt-1">Coba kata kunci lain atau pilih kategori "Semua Menu".</p>
+        </div>
+    </main>
+
+    <!-- Bagian Lokasi & Kontak -->
+    <section id="lokasi-kontak" class="bg-brand-sand/70 border-t border-brand-gold/25 py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="p-6 rounded-2xl bg-white border border-brand-gold/25 shadow-xs">
+                <div class="w-10 h-10 rounded-xl bg-brand-cream border border-brand-gold/35 flex items-center justify-center text-brand-gold mb-4">
+                    <i data-lucide="map-pin" class="w-5 h-5"></i>
+                </div>
+                <h3 class="font-serif text-lg font-bold text-brand-brown">Alamat Catering</h3>
+                <p class="text-sm text-brand-brown/80 mt-2 leading-relaxed">
+                    Jln. Nurul Yaqin, Kec. Simpang Empat, Kabupaten Tanah Bumbu, Kalimantan Selatan 72211
+                </p>
+            </div>
+
+            <div class="p-6 rounded-2xl bg-white border border-brand-gold/25 shadow-xs">
+                <div class="w-10 h-10 rounded-xl bg-brand-cream border border-brand-gold/35 flex items-center justify-center text-brand-gold mb-4">
+                    <i data-lucide="phone" class="w-5 h-5"></i>
+                </div>
+                <h3 class="font-serif text-lg font-bold text-brand-brown">Kontak WhatsApp</h3>
+                <p class="text-sm text-brand-brown/80 mt-2">Nomor Resmi Pemesanan:</p>
+                <a href="https://wa.me/6281227888817" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 text-base font-bold text-brand-brown hover:text-brand-gold mt-1">
+                    <span>0812-2788-8817</span>
+                    <i data-lucide="external-link" class="w-4 h-4"></i>
+                </a>
+            </div>
+
+            <div class="p-6 rounded-2xl bg-white border border-brand-gold/25 shadow-xs">
+                <div class="w-10 h-10 rounded-xl bg-brand-cream border border-brand-gold/35 flex items-center justify-center text-brand-gold mb-4">
+                    <i data-lucide="camera" class="w-5 h-5"></i>
+                </div>
+                <h3 class="font-serif text-lg font-bold text-brand-brown">Kelola Foto Menu</h3>
+                <p class="text-sm text-brand-brown/80 mt-2 leading-relaxed">
+                    Ganti foto menu yang sudah ada atau tambahkan menu baru beserta fotonya langsung dari perangkat Anda.
+                </p>
+                <button onclick="openAddMenuModal()" class="mt-3 inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-brand-brown hover:text-brand-gold cursor-pointer">
+                    <span>Tambah / Upload Foto</span>
+                    <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-brand-brown text-white py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+            <div>
+                <p class="font-serif text-lg font-bold tracking-wide text-brand-goldLight">AYIN CATERING</p>
+                <p class="text-xs text-white/75 mt-0.5">Jln. Nurul Yaqin, Kec. Simpang Empat, Kab. Tanah Bumbu, Kalimantan Selatan 72211 • WA: 0812-2788-8817</p>
+            </div>
+            <p class="text-xs text-white/60">© <span id="yearNow"></span> Ayin Catering. Seluruh hak cipta dilindungi.</p>
+        </div>
+    </footer>
+
+    <!-- Input File Tersembunyi untuk Ganti Foto Menu Tertentu -->
+    <input type="file" id="replacePhotoInput" accept="image/*" class="hidden" onchange="handleReplacePhoto(event)">
+
+    <!-- Modal Tambah Menu & Upload Foto -->
+    <div id="addMenuModal" class="fixed inset-0 z-50 hidden bg-black/60 backdrop-blur-xs items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-md w-full border border-brand-gold/40 shadow-2xl overflow-hidden">
+            <div class="px-6 py-4 bg-brand-cream border-b border-brand-gold/25 flex items-center justify-between">
+                <h3 class="font-serif text-lg font-bold text-brand-brown">Upload Foto / Tambah Menu</h3>
+                <button onclick="closeAddMenuModal()" class="p-1.5 rounded-lg hover:bg-brand-sand text-brand-brown cursor-pointer">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <form onsubmit="handleAddMenuSubmit(event)" class="p-6 space-y-4">
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-brand-brown mb-1.5">Nama Paket / Menu</label>
+                    <input id="newMenuName" type="text" required placeholder="Contoh: NASI BOX SPESIAL 02" class="w-full px-3.5 py-2.5 rounded-xl border border-brand-gold/40 text-sm text-brand-brown focus:outline-none focus:border-brand-brown">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-brand-brown mb-1.5">Harga (Rp)</label>
+                        <input id="newMenuPrice" type="number" min="1000" step="500" required placeholder="40000" class="w-full px-3.5 py-2.5 rounded-xl border border-brand-gold/40 text-sm text-brand-brown focus:outline-none focus:border-brand-brown">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-brand-brown mb-1.5">Kategori</label>
+                        <select id="newMenuCategory" class="w-full px-3.5 py-2.5 rounded-xl border border-brand-gold/40 text-sm text-brand-brown bg-white focus:outline-none focus:border-brand-brown">
+                            <option value="Nasi Box">Nasi Box</option>
+                            <option value="Snack Kotak">Snack Kotak</option>
+                            <option value="Prasmanan">Prasmanan</option>
+                            <option value="Buah & Rebusan">Buah & Rebusan</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-brand-brown mb-1.5">Upload Foto Menu</label>
+                    <label for="newMenuPhoto" class="flex flex-col items-center justify-center border-2 border-dashed border-brand-gold/50 hover:border-brand-brown rounded-2xl p-4 bg-brand-cream/60 cursor-pointer transition-colors">
+                        <img id="newMenuPreview" src="" alt="Pratinjau foto menu" class="hidden w-full h-36 object-cover rounded-xl mb-2">
+                        <div id="newMenuPlaceholder" class="text-center">
+                            <i data-lucide="upload-cloud" class="w-7 h-7 text-brand-gold mx-auto mb-1"></i>
+                            <p class="text-xs font-semibold text-brand-brown">Klik untuk pilih foto dari perangkat</p>
+                            <p class="text-[11px] text-brand-brown/60 mt-0.5">Format JPG, PNG, atau WEBP</p>
+                        </div>
+                        <input id="newMenuPhoto" type="file" accept="image/*" class="hidden" onchange="previewNewMenuPhoto(event)">
+                    </label>
+                </div>
+
+                <div class="flex items-center justify-end gap-2 pt-2">
+                    <button type="button" onclick="closeAddMenuModal()" class="px-4 py-2.5 rounded-xl bg-brand-sand text-brand-brown text-sm font-semibold cursor-pointer">Batal</button>
+                    <button type="submit" class="px-5 py-2.5 rounded-xl bg-brand-brown hover:bg-brand-brownDark text-white text-sm font-semibold shadow-sm cursor-pointer">Simpan ke Katalog</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Keranjang Pesanan & Kirim WhatsApp -->
+    <div id="cartModal" class="fixed inset-0 z-50 hidden bg-black/60 backdrop-blur-xs items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-lg w-full border border-brand-gold/40 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+            <div class="px-6 py-4 bg-brand-cream border-b border-brand-gold/25 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="shopping-bag" class="w-5 h-5 text-brand-gold"></i>
+                    <h3 class="font-serif text-lg font-bold text-brand-brown">Daftar Pesanan Anda</h3>
+                </div>
+                <button onclick="closeCartModal()" class="p-1.5 rounded-lg hover:bg-brand-sand text-brand-brown cursor-pointer">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <div id="cartItemsList" class="p-6 overflow-y-auto space-y-3 flex-1">
+                <!-- Dirender oleh JavaScript -->
+            </div>
+
+            <div class="p-6 bg-brand-cream/70 border-t border-brand-gold/25 space-y-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <input id="customerName" type="text" placeholder="Nama Pemesan / Instansi" class="px-3.5 py-2 rounded-xl bg-white border border-brand-gold/35 text-sm text-brand-brown focus:outline-none focus:border-brand-brown">
+                    <input id="customerDate" type="date" class="px-3.5 py-2 rounded-xl bg-white border border-brand-gold/35 text-sm text-brand-brown focus:outline-none focus:border-brand-brown">
+                </div>
+
+                <div class="flex items-center justify-between text-base font-bold text-brand-brown pt-1">
+                    <span>Total Estimasi</span>
+                    <span id="cartTotalText" class="text-lg text-brand-brown">Rp 0</span>
+                </div>
+
+                <button onclick="sendOrderToWhatsApp()" class="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-sm flex items-center justify-center gap-2 shadow-md transition-all cursor-pointer">
+                    <i data-lucide="message-circle" class="w-4 h-4"></i>
+                    <span>Pesan via WhatsApp (0812-2788-8817)</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data Menu Sesuai E-Katalog Ayin Catering (Ringkas)
+        const STORAGE_KEY = 'ayin_catering_menus_v2';
+        const DEFAULT_MENUS = [
+            { id: 'nb-vip-a', name: 'NASI BOX VIP PAKET A', price: 50000, category: 'Nasi Box', sold: 'Terjual 2,9 rb+', image: 'https://placehold.co/600x400/3B1E0E/E5C687?text=NASI+BOX+VIP+PAKET+A' },
+            { id: 'nb-013', name: 'NASI BOX 013', price: 40000, category: 'Nasi Box', sold: 'Terjual 5,4 rb+', image: 'https://placehold.co/600x400/3B1E0E/E5C687?text=NASI+BOX+013' },
+            { id: 'ayam-lalapan', name: 'AYAM LALAPAN', price: 40000, category: 'Nasi Box', sold: 'Terjual 1,2 rb+', image: 'https://placehold.co/600x400/3B1E0E/E5C687?text=AYAM+LALAPAN' },
+            { id: 'snack-vip-a', name: 'SNACK VIP PAKET A', price: 25000, category: 'Snack Kotak', sold: 'Terjual 7 rb+', image: 'https://placehold.co/600x400/EFE9DC/3B1E0E?text=SNACK+VIP+PAKET+A' },
+            { id: 'snack-kotak', name: 'SNACK KOTAK', price: 17000, category: 'Snack Kotak', sold: 'Terjual 14 rb+', image: 'https://placehold.co/600x400/EFE9DC/3B1E0E?text=SNACK+KOTAK' },
+            { id: 'prasmanan', name: 'Paket Prasmanan', price: 50000, category: 'Prasmanan', sold: 'Terjual 6 rb+', image: 'https://placehold.co/600x400/3B1E0E/E5C687?text=PAKET+PRASMANAN' },
+            { id: 'buah-sajian', name: 'PAKET BUAH SAJIAN', price: 350000, category: 'Buah & Rebusan', sold: 'Paket Sajian', image: 'https://placehold.co/600x400/EFE9DC/3B1E0E?text=PAKET+BUAH+SAJIAN' },
+            { id: 'snack-rebusan', name: 'PAKET SNACK REBUSAN', price: 17000, category: 'Buah & Rebusan', sold: 'Terjual 280+', image: 'https://placehold.co/600x400/EFE9DC/3B1E0E?text=PAKET+SNACK+REBUSAN' }
+        ];
+
+        const CATEGORIES = ['Semua Menu', 'Nasi Box', 'Snack Kotak', 'Prasmanan', 'Buah & Rebusan'];
+        let menus = loadMenus();
+        let activeCategory = 'Semua Menu';
+        let cart = {};
+        let targetReplaceMenuId = null;
+        let pendingNewPhotoDataUrl = '';
+
+        function loadMenus() {
+            try {
+                const raw = localStorage.getItem(STORAGE_KEY);
+                if (raw) {
+                    const parsed = JSON.parse(raw);
+                    if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+                }
+            } catch (err) {
+                console.warn('Gagal memuat data menu dari penyimpanan lokal:', err);
+            }
+            return [...DEFAULT_MENUS];
+        }
+
+        function saveMenus() {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(menus));
+            } catch (err) {
+                showToast('Foto terlalu besar untuk disimpan permanen, namun tetap tampil di sesi ini.', 'info');
+            }
+        }
+
+        function formatRupiah(amount) {
+            return 'Rp ' + Number(amount || 0).toLocaleString('id-ID');
+        }
+
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            const bgClass = type === 'success' ? 'bg-brand-brown text-white border-brand-gold' : 'bg-white text-brand-brown border-brand-gold';
+            toast.className = `toast-enter pointer-events-auto px-4 py-3 rounded-2xl border shadow-lg text-xs sm:text-sm font-medium flex items-center gap-2 ${bgClass}`;
+            toast.innerHTML = `<i data-lucide="check-circle-2" class="w-4 h-4 text-brand-gold shrink-0"></i><span>${message}</span>`;
+            container.appendChild(toast);
+            lucide.createIcons();
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+
+        function renderCategoryTabs() {
+            const tabsContainer = document.getElementById('categoryTabs');
+            tabsContainer.innerHTML = CATEGORIES.map(cat => {
+                const isActive = cat === activeCategory;
+                const cls = isActive
+                    ? 'bg-brand-brown text-white border-brand-brown shadow-xs'
+                    : 'bg-white text-brand-brown border-brand-gold/35 hover:border-brand-brown';
+                return `<button onclick="selectCategory('${cat}')" class="px-4 py-2 rounded-xl border text-xs sm:text-sm font-semibold whitespace-nowrap transition-all cursor-pointer ${cls}">${cat}</button>`;
+            }).join('');
+        }
+
+        function selectCategory(category) {
+            activeCategory = category;
+            renderCategoryTabs();
+            renderMenus();
+        }
+
+        function renderMenus() {
+            const grid = document.getElementById('menuGrid');
+            const emptyState = document.getElementById('emptyState');
+            const keyword = (document.getElementById('searchInput')?.value || '').trim().toLowerCase();
+
+            const filtered = menus.filter(item => {
+                const matchCat = activeCategory === 'Semua Menu' || item.category === activeCategory;
+                const matchSearch = !keyword || item.name.toLowerCase().includes(keyword) || item.category.toLowerCase().includes(keyword);
+                return matchCat && matchSearch;
+            });
+
+            if (filtered.length === 0) {
+                grid.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                lucide.createIcons();
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+            grid.innerHTML = filtered.map(item => {
+                const qty = cart[item.id] || 0;
+                const safeFallback = `https://placehold.co/600x400/EFE9DC/3B1E0E?text=${encodeURIComponent(item.name)}`;
+                return `
+                    <article class="menu-card bg-white rounded-2xl border border-brand-gold/30 overflow-hidden flex flex-col justify-between shadow-xs">
+                        <div>
+                            <div class="relative aspect-[4/3] bg-brand-sand overflow-hidden group">
+                                <img src="${item.image}" alt="${item.name}" onerror="this.onerror=null;this.src='${safeFallback}';" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                                <span class="absolute top-3 left-3 px-2.5 py-1 rounded-lg bg-brand-brown/90 text-brand-goldLight text-[11px] font-semibold tracking-wide">
+                                    ${item.category}
+                                </span>
+                                <button onclick="triggerReplacePhoto('${item.id}')" title="Upload / Ganti Foto Menu" class="absolute bottom-3 right-3 px-3 py-1.5 rounded-xl bg-white/95 hover:bg-brand-gold text-brand-brown hover:text-white border border-brand-gold/40 text-xs font-semibold flex items-center gap-1.5 shadow-md transition-colors cursor-pointer">
+                                    <i data-lucide="camera" class="w-3.5 h-3.5"></i>
+                                    <span>Ganti Foto</span>
+                                </button>
+                            </div>
+
+                            <div class="p-4">
+                                <div class="flex items-center justify-between gap-2 text-[11px] text-brand-brown/65 font-medium mb-1">
+                                    <span>${item.sold || 'Siap Pesan'}</span>
+                                    <span class="text-brand-gold font-semibold">E-Katalog</span>
+                                </div>
+                                <h3 class="font-serif text-base font-bold text-brand-brown leading-snug">${item.name}</h3>
+                                <p class="text-base font-extrabold text-brand-brown mt-1.5">${formatRupiah(item.price)}</p>
+                            </div>
+                        </div>
+
+                        <div class="px-4 pb-4 pt-1">
+                            ${qty === 0 ? `
+                                <button onclick="updateCartQty('${item.id}', 1)" class="w-full py-2.5 px-4 rounded-xl bg-brand-brown hover:bg-brand-brownDark text-white text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer">
+                                    <i data-lucide="plus" class="w-4 h-4 text-brand-goldLight"></i>
+                                    <span>Tambah Pesanan</span>
+                                </button>
+                            ` : `
+                                <div class="flex items-center justify-between rounded-xl bg-brand-cream border border-brand-gold/50 p-1">
+                                    <button onclick="updateCartQty('${item.id}', -1)" class="w-9 h-8 rounded-lg bg-white hover:bg-brand-sand text-brand-brown font-bold flex items-center justify-center cursor-pointer">
+                                        <i data-lucide="minus" class="w-4 h-4"></i>
+                                    </button>
+                                    <span class="text-sm font-bold text-brand-brown">${qty} porsi</span>
+                                    <button onclick="updateCartQty('${item.id}', 1)" class="w-9 h-8 rounded-lg bg-brand-brown hover:bg-brand-brownDark text-white font-bold flex items-center justify-center cursor-pointer">
+                                        <i data-lucide="plus" class="w-4 h-4"></i>
+                                    </button>
+                                </div>
+                            `}
+                        </div>
+                    </article>
+                `;
+            }).join('');
+
+            lucide.createIcons();
+        }
+
+        // Ganti Foto Menu yang Sudah Ada
+        function triggerReplacePhoto(menuId) {
+            targetReplaceMenuId = menuId;
+            const input = document.getElementById('replacePhotoInput');
+            input.value = '';
+            input.click();
+        }
+
+        function handleReplacePhoto(event) {
+            const file = event.target.files?.[0];
+            if (!file || !targetReplaceMenuId) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const dataUrl = e.target?.result;
+                if (!dataUrl) return;
+                menus = menus.map(m => m.id === targetReplaceMenuId ? { ...m, image: dataUrl } : m);
+                saveMenus();
+                renderMenus();
+                showToast('Foto menu berhasil diperbarui!');
+                targetReplaceMenuId = null;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Modal Tambah Menu & Foto
+        function openAddMenuModal() {
+            pendingNewPhotoDataUrl = '';
+            document.getElementById('newMenuName').value = '';
+            document.getElementById('newMenuPrice').value = '';
+            document.getElementById('newMenuPhoto').value = '';
+            document.getElementById('newMenuPreview').classList.add('hidden');
+            document.getElementById('newMenuPlaceholder').classList.remove('hidden');
+
+            const modal = document.getElementById('addMenuModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            lucide.createIcons();
+        }
+
+        function closeAddMenuModal() {
+            const modal = document.getElementById('addMenuModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function previewNewMenuPhoto(event) {
+            const file = event.target.files?.[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                pendingNewPhotoDataUrl = e.target?.result || '';
+                const img = document.getElementById('newMenuPreview');
+                const placeholder = document.getElementById('newMenuPlaceholder');
+                if (pendingNewPhotoDataUrl) {
+                    img.src = pendingNewPhotoDataUrl;
+                    img.classList.remove('hidden');
+                    placeholder.classList.add('hidden');
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function handleAddMenuSubmit(event) {
+            event.preventDefault();
+            const name = document.getElementById('newMenuName').value.trim().toUpperCase();
+            const price = Number(document.getElementById('newMenuPrice').value);
+            const category = document.getElementById('newMenuCategory').value;
+
+            if (!name || !price || price <= 0) return;
+
+            const fallbackImg = `https://placehold.co/600x400/3B1E0E/E5C687?text=${encodeURIComponent(name)}`;
+            const newItem = {
+                id: 'custom-' + Date.now(),
+                name,
+                price,
+                category,
+                sold: 'Menu Baru',
+                image: pendingNewPhotoDataUrl || fallbackImg
+            };
+
+            menus.unshift(newItem);
+            saveMenus();
+            renderMenus();
+            closeAddMenuModal();
+            showToast(`Menu "${name}" berhasil ditambahkan ke katalog!`);
+        }
+
+        // Keranjang & Pemesanan WhatsApp
+        function updateCartQty(menuId, delta) {
+            const current = cart[menuId] || 0;
+            const next = Math.max(0, current + delta);
+            if (next === 0) {
+                delete cart[menuId];
+            } else {
+                cart[menuId] = next;
+            }
+            updateCartBadge();
+            renderMenus();
+            if (!document.getElementById('cartModal').classList.contains('hidden')) {
+                renderCartModalItems();
+            }
+        }
+
+        function updateCartBadge() {
+            const totalItems = Object.values(cart).reduce((sum, q) => sum + q, 0);
+            document.getElementById('cartBadge').textContent = totalItems;
+        }
+
+        function openCartModal() {
+            renderCartModalItems();
+            const modal = document.getElementById('cartModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            lucide.createIcons();
+        }
+
+        function closeCartModal() {
+            const modal = document.getElementById('cartModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function renderCartModalItems() {
+            const list = document.getElementById('cartItemsList');
+            const totalEl = document.getElementById('cartTotalText');
+            const entries = Object.entries(cart);
+
+            if (entries.length === 0) {
+                list.innerHTML = `
+                    <div class="text-center py-8">
+                        <i data-lucide="shopping-bag" class="w-9 h-9 text-brand-gold mx-auto mb-2"></i>
+                        <p class="text-sm font-semibold text-brand-brown">Belum ada menu dipilih</p>
+                        <p class="text-xs text-brand-brown/70 mt-1">Tekan "Tambah Pesanan" pada menu yang diinginkan.</p>
+                    </div>
+                `;
+                totalEl.textContent = formatRupiah(0);
+                lucide.createIcons();
+                return;
+            }
+
+            let grandTotal = 0;
+            list.innerHTML = entries.map(([id, qty]) => {
+                const menu = menus.find(m => m.id === id);
+                if (!menu) return '';
+                const subtotal = menu.price * qty;
+                grandTotal += subtotal;
+                return `
+                    <div class="flex items-center justify-between gap-3 p-3 rounded-2xl bg-brand-cream/70 border border-brand-gold/25">
+                        <div class="min-w-0">
+                            <p class="text-sm font-bold text-brand-brown truncate">${menu.name}</p>
+                            <p class="text-xs text-brand-brown/75">${formatRupiah(menu.price)} × ${qty} = <strong class="text-brand-brown">${formatRupiah(subtotal)}</strong></p>
+                        </div>
+                        <div class="flex items-center gap-1.5 shrink-0">
+                            <button onclick="updateCartQty('${id}', -1)" class="w-7 h-7 rounded-lg bg-white border border-brand-gold/30 flex items-center justify-center text-brand-brown cursor-pointer">-</button>
+                            <span class="w-6 text-center text-xs font-bold">${qty}</span>
+                            <button onclick="updateCartQty('${id}', 1)" class="w-7 h-7 rounded-lg bg-brand-brown text-white flex items-center justify-center cursor-pointer">+</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            totalEl.textContent = formatRupiah(grandTotal);
+            lucide.createIcons();
+        }
+
+        function sendOrderToWhatsApp() {
+            const entries = Object.entries(cart);
+            if (entries.length === 0) {
+                showToast('Pilih minimal 1 menu terlebih dahulu.', 'info');
+                return;
+            }
+
+            const customerName = document.getElementById('customerName').value.trim() || '-';
+            const customerDate = document.getElementById('customerDate').value || '-';
+
+            let lines = [
+                'Halo *Ayin Catering*, saya ingin memesan:',
+                `Nama/Instansi: ${customerName}`,
+                `Tanggal Acara/Kirim: ${customerDate}`,
+                ''
+            ];
+
+            let total = 0;
+            entries.forEach(([id, qty], idx) => {
+                const item = menus.find(m => m.id === id);
+                if (!item) return;
+                const sub = item.price * qty;
+                total += sub;
+                lines.push(`${idx + 1}. *${item.name}* (${qty}x) - ${formatRupiah(sub)}`);
+            });
+
+            lines.push('');
+            lines.push(`*Total Estimasi: ${formatRupiah(total)}*`);
+            lines.push('Alamat Pengantaran: Jln. Nurul Yaqin, Kec. Simpang Empat, Kab. Tanah Bumbu, Kalimantan Selatan 72211');
+
+            const waUrl = `https://wa.me/6281227888817?text=${encodeURIComponent(lines.join('\n'))}`;
+            window.open(waUrl, '_blank', 'noopener,noreferrer');
+        }
+
+        // Inisialisasi Halaman
+        document.getElementById('yearNow').textContent = new Date().getFullYear();
+        renderCategoryTabs();
+        renderMenus();
+        updateCartBadge();
+        lucide.createIcons();
+    </script>
+</body>
+</html>
